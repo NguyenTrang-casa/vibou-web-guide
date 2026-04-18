@@ -6,8 +6,7 @@ export default function Gateway() {
     <div className="min-h-screen bg-[#0b1326] flex flex-col items-center justify-start py-10 px-4 sm:px-8 text-center text-white font-sans">
       <nav className="w-full flex items-center justify-center max-w-6xl mx-auto mb-12">
         <div className="flex flex-col items-center justify-center">
-          <Image src="/img/logo.webp" width={80} height={80} alt="VIBOU" className="mb-2 opacity-90" />
-          <h2 className="text-xl font-black tracking-[0.2em] uppercase">VIBOU</h2>
+          <Image src="/img/logo.webp" width={120} height={120} alt="VIBOU" className="mb-2 rounded-2xl" />
         </div>
       </nav>
 
@@ -66,6 +65,11 @@ export default function Gateway() {
           </div>
         </Link>
       </div>
+
+      {/* Footer */}
+      <footer className="w-full max-w-6xl mx-auto pt-8 pb-4 border-t border-white/10 mt-auto">
+        <p className="text-xs text-gray-500 tracking-widest uppercase text-center">VIBOU — Hoa Giấy Từ Bàn Tay Người Việt</p>
+      </footer>
     </div>
   );
 }
