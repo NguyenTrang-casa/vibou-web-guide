@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
+import ProductModal from '@/components/shared/ProductModal';
 
 interface Batch {
   id: string;
@@ -73,6 +74,8 @@ const T: Record<string, Record<Lang, string>> = {
   docCo:         { vi: 'Certificate of Origin (C/O)', en: 'Certificate of Origin (C/O)', zh: '原产地证明书 (C/O)', ar: 'شهادة المنشأ' },
   docInv:        { vi: 'Commercial Invoice & Packing List', en: 'Commercial Invoice & Packing List', zh: '商业发票及装箱单', ar: 'الفاتورة التجارية وقائمة التعبئة' },
   docBl:         { vi: 'Bill of Lading (B/L) — Vận đơn đường biển', en: 'Ocean Bill of Lading (B/L)', zh: '海运提单 (B/L)', ar: 'بوليصة الشحن البحرية' },
+  viewDetails:   { vi: 'Xem chi tiết', en: 'View Details', zh: '查看详情', ar: 'عرض التفاصيل' },
+  addToQuote:    { vi: 'Thêm vào báo giá', en: 'Add to Quotation', zh: '添加到报价', ar: 'أضف إلى الاقتباس' },
 };
 
 const COST_DEFAULTS = {
@@ -115,6 +118,7 @@ export default function ExportCalculator({ batches }: Props) {
   const [containerType, setContainerType] = useState('Container 40ft — Carton/Pallet');
   const calcRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [selectedBatchForModal, setSelectedBatchForModal] = useState<Batch | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -148,6 +152,7 @@ export default function ExportCalculator({ batches }: Props) {
     if (selectedItems.find(i => i.batch.id === batch.id)) return;
     setSelectedItems(prev => [...prev, { batch, qty: batch.available || batch.quantity || 100 }]);
     setTimeout(() => calcRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    setSelectedBatchForModal(null);
   };
   const removeItem = (id: string) => setSelectedItems(prev => prev.filter(i => i.batch.id !== id));
   const updateQty = (id: string, qty: number) => setSelectedItems(prev => prev.map(i => i.batch.id === id ? { ...i, qty } : i));
@@ -496,15 +501,23 @@ td{padding:8px 10px;font-size:12px;border-bottom:1px solid #f1f5f9}
               {batches.map((b: any) => {
                 const isAdded = selectedItems.some(i => i.batch.id === b.id);
                 return (
-                  <tr key={b.id} className={`transition-colors ${isAdded ? 'bg-emerald-500/10' : 'hover:bg-white/5'}`}>
-                    <td className="p-4"><div className="font-bold text-sm">{b.skuNameVi}</div><div className="text-[10px] text-gray-500 font-mono">{b.lotId}</div></td>
-                    <td className="p-4 text-xs text-gray-400">{b.dongGiay || '—'}</td>
-                    <td className="p-4 text-right font-bold text-green-400">{(b.available || b.quantity || 0).toLocaleString('vi-VN')}</td>
+                  <tr key={b.id} className={`transition-colors cursor-pointer group ${isAdded ? 'bg-emerald-500/10' : 'hover:bg-white/5'}`}>
+                    <td className="p-4" onClick={() => setSelectedBatchForModal(b)}>
+                      <div className="font-bold text-sm group-hover:text-emerald-400 transition-colors uppercase">{b.skuNameVi}</div>
+                      <div className="text-[9px] text-gray-500 font-mono flex items-center gap-2">
+                        {b.lotId} 
+                        <span className="bg-white/5 px-2 py-0.5 rounded text-gray-400">{t('viewDetails')}</span>
+                      </div>
+                    </td>
+                    <td className="p-4 text-xs text-gray-400" onClick={() => setSelectedBatchForModal(b)}>{b.dongGiay || '—'}</td>
+                    <td className="p-4 text-right font-bold text-green-400" onClick={() => setSelectedBatchForModal(b)}>{(b.available || b.quantity || 0).toLocaleString('vi-VN')}</td>
                     <td className="p-4 text-center">
                       {isAdded ? (
-                        <span className="text-emerald-400 text-[10px] font-bold">{t('added')}</span>
+                        <span className="text-emerald-400 text-[10px] font-black uppercase">{t('added')}</span>
                       ) : (
-                        <button onClick={() => addItem(b)} className="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider transition-all">{t('add')}</button>
+                        <button onClick={(e) => { e.stopPropagation(); addItem(b); }} className="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-wider transition-all hover:-translate-y-0.5">
+                          {t('add')}
+                        </button>
                       )}
                     </td>
                   </tr>
@@ -514,7 +527,13 @@ td{padding:8px 10px;font-size:12px;border-bottom:1px solid #f1f5f9}
           </table>
         </div>
       </div>
-    </div>
+      </div>
+      <ProductModal 
+        batch={selectedBatchForModal as any} 
+        onClose={() => setSelectedBatchForModal(null)}
+        ctaLabel={t('addToQuote')}
+        onCtaClick={(b: any) => addItem(b)}
+      />
     </div>
   );
 }

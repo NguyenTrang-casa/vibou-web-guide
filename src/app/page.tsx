@@ -52,7 +52,7 @@ export default function Gateway() {
 
         <Link href="/export" className="group rounded-3xl p-4 bg-white/5 border border-white/10 hover:bg-white/10 hover:-translate-y-2 hover:border-emerald-500/50 transition-all duration-300 text-left flex flex-col">
           <div className="h-48 md:h-64 rounded-2xl overflow-hidden mb-6 relative w-full">
-            <Image src="/img/cowboy.webp" fill className="object-cover group-hover:scale-105 transition-transform duration-500 grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100" alt="Export" priority />
+            <Image src="/img/export-bougainvillea.png" fill className="object-cover group-hover:scale-105 transition-transform duration-500" alt="Export" priority />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0b1326] to-transparent"></div>
           </div>
           <div className="px-2 pb-2 flex-1 flex flex-col">

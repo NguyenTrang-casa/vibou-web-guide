@@ -3,13 +3,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import ExportCalculator from './ExportCalculator';
 
-export const revalidate = 300;
+export const revalidate = 0;
 
 const ERP_URL = 'https://vibou-erp.vercel.app';
 
 async function getProducts() {
   try {
-    const res = await fetch(`${ERP_URL}/api/public/batches`, { next: { revalidate: 300 } });
+    const res = await fetch(`${ERP_URL}/api/public/batches`, { cache: 'no-store' });
     if (!res.ok) return [];
     const data = await res.json();
     return data.batches || [];
