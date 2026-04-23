@@ -71,7 +71,7 @@ function findSpec(dongGiay: string | null, specs: Record<string, VarietySpec>): 
   return key ? specs[key] : undefined;
 }
 
-export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: ProductModalProps) {
+export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick, ctaHref }: ProductModalProps) {
   const [mounted, setMounted] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [zoomActive, setZoomActive] = useState(false);
