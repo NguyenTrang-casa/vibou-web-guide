@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 
 const ERP_URL = 'https://vibou-erp.vercel.app';
 
@@ -74,6 +75,9 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
   const [mounted, setMounted] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [zoomActive, setZoomActive] = useState(false);
+  
+  const searchParams = useSearchParams();
+  const isAdmin = searchParams?.get('admin') === 'vibou';
 
   // Specs from API
   const [allSpecs, setAllSpecs] = useState<Record<string, VarietySpec>>(specCache);
@@ -239,9 +243,9 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
           </div>
 
           {/* Right: Info */}
-          <div className="w-full md:w-1/2 p-6 sm:p-8 flex flex-col overflow-y-auto">
-            {/* Header */}
-            <div className="flex justify-between items-start mb-6">
+          <div className="w-full md:w-1/2 flex flex-col bg-[#0b1326]">
+            {/* Sticky Header */}
+            <div className="p-6 pb-4 border-b border-white/5 flex justify-between items-start shrink-0">
               <div>
                 <h2 className="text-xl sm:text-2xl font-black text-white leading-tight mb-1">{batch.skuNameVi}</h2>
                 <p className="text-gray-500 font-mono text-xs tracking-wider uppercase">{batch.lotId}</p>
@@ -251,8 +255,10 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
               </button>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+              {/* Quick Stats */}
+              <div className="grid grid-cols-2 gap-3">
               <div className="bg-white/5 border border-white/10 rounded-xl p-3">
                 <div className="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Tồn kho</div>
                 <div className="text-lg font-black text-emerald-400">{batch.available.toLocaleString('vi-VN')} <span className="text-[10px] font-normal text-gray-400">cây</span></div>
@@ -263,18 +269,20 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
               </div>
             </div>
 
-            {/* === THÔNG SỐ CHUYÊN MÔN (edit mode / view mode) === */}
-            <div className="mb-6">
-              <div className="border-l-2 border-indigo-500 pl-4 py-1">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Thông số chuyên môn — {batch.dongGiay}</h3>
-                  {!editing ? (
-                    <button onClick={startEdit}
-                      className="flex items-center gap-1 text-[9px] text-yellow-400/80 hover:text-yellow-300 font-bold uppercase tracking-wider bg-yellow-500/10 hover:bg-yellow-500/20 px-2.5 py-1 rounded-full transition-colors">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                      Chỉnh sửa
-                    </button>
-                  ) : (
+              {/* === THÔNG SỐ CHUYÊN MÔN (edit mode / view mode) === */}
+              <div>
+                <div className="border-l-2 border-indigo-500 pl-4 py-1">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Thông số chuyên môn — {batch.dongGiay}</h3>
+                    {!editing ? (
+                      isAdmin && (
+                        <button onClick={startEdit}
+                          className="flex items-center gap-1 text-[9px] text-yellow-400/80 hover:text-yellow-300 font-bold uppercase tracking-wider bg-yellow-500/10 hover:bg-yellow-500/20 px-2.5 py-1 rounded-full transition-colors">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                          Chỉnh sửa
+                        </button>
+                      )
+                    ) : (
                     <div className="flex gap-1.5">
                       <button onClick={saveEdit} disabled={saving}
                         className="flex items-center gap-1 text-[9px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-500/15 hover:bg-emerald-500/25 px-2.5 py-1 rounded-full transition-colors disabled:opacity-50">
@@ -361,19 +369,20 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
                   <p className="text-xs text-blue-300 leading-relaxed italic">&quot;{spec.notes}&quot;</p>
                 </div>
               )}
-            </div>
 
-            {/* Public Note */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mô tả từ vườn</h3>
-                {!editingNote ? (
-                  <button onClick={startNoteEdit}
-                    className="flex items-center gap-1.5 text-[9px] text-yellow-400/80 hover:text-yellow-300 font-bold uppercase tracking-wider bg-yellow-500/10 hover:bg-yellow-500/20 px-3 py-1.5 rounded-full transition-colors">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                    Chỉnh sửa
-                  </button>
-                ) : (
+              {/* Public Note */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mô tả từ vườn</h3>
+                  {!editingNote ? (
+                    isAdmin && (
+                      <button onClick={startNoteEdit}
+                        className="flex items-center gap-1.5 text-[9px] text-yellow-400/80 hover:text-yellow-300 font-bold uppercase tracking-wider bg-yellow-500/10 hover:bg-yellow-500/20 px-3 py-1.5 rounded-full transition-colors">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                        Chỉnh sửa
+                      </button>
+                    )
+                  ) : (
                   <div className="flex gap-1.5">
                     <button onClick={saveNote} disabled={savingNote}
                       className="flex items-center gap-1 text-[9px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-500/15 hover:bg-emerald-500/25 px-2.5 py-1 rounded-full transition-colors disabled:opacity-50">
@@ -401,23 +410,24 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
                 </p>
               )}
             </div>
+          </div>
 
-            {/* CTAs */}
-            <div className="mt-auto pt-4 flex flex-col sm:flex-row gap-3">
-              <button onClick={() => onCtaClick && onCtaClick(batch)}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-3.5 px-6 rounded-xl uppercase tracking-widest text-[10px] shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5">
-                {ctaLabel || 'Yêu cầu tư vấn'}
-              </button>
-              <a href={`https://zalo.me/vibou?text=Tôi muốn tư vấn chi tiết lô hàng: ${batch.skuNameVi} (${batch.lotId})`}
-                target="_blank" rel="noreferrer"
-                className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black py-3.5 px-6 rounded-xl uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2">
-                Trao đổi qua Zalo
-              </a>
-            </div>
+          {/* Sticky CTAs at Bottom */}
+          <div className="p-6 pt-4 border-t border-white/5 shrink-0 flex flex-col sm:flex-row gap-3 bg-[#0b1326] z-10">
+            <button onClick={() => onCtaClick && onCtaClick(batch)}
+              className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-3.5 px-6 rounded-xl uppercase tracking-widest text-[10px] shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5">
+              {ctaLabel || 'Yêu cầu tư vấn'}
+            </button>
+            <a href={`https://zalo.me/vibou?text=Tôi muốn tư vấn chi tiết lô hàng: ${batch.skuNameVi} (${batch.lotId})`}
+              target="_blank" rel="noreferrer"
+              className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black py-3.5 px-6 rounded-xl uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2">
+              Trao đổi qua Zalo
+            </a>
           </div>
         </div>
       </div>
-    </>,
-    document.body
-  );
+    </div>
+  </>,
+  document.body
+);
 }
