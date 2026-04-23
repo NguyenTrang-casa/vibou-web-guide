@@ -22,7 +22,7 @@ interface VarietySpec {
 
 interface ProductModalProps {
   batch: Batch | null; onClose: () => void;
-  ctaLabel?: string; onCtaClick?: (batch: Batch) => void;
+  ctaLabel?: string; onCtaClick?: (batch: Batch) => void; ctaHref?: string;
 }
 
 const GALLERY_MAP: Record<string, string[]> = {
@@ -259,17 +259,17 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
             <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
               {/* Quick Stats */}
               <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white/5 border border-white/10 rounded-xl p-3">
-                <div className="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Tồn kho</div>
-                <div className="text-lg font-black text-emerald-400">{batch.available.toLocaleString('vi-VN')} <span className="text-[10px] font-normal text-gray-400">cây</span></div>
+                <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+                  <div className="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Tồn kho</div>
+                  <div className="text-lg font-black text-emerald-400">{batch.available.toLocaleString('vi-VN')} <span className="text-[10px] font-normal text-gray-400">cây</span></div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+                  <div className="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Quy cách</div>
+                  <div className="text-sm font-bold text-white">{potSize}</div>
+                </div>
               </div>
-              <div className="bg-white/5 border border-white/10 rounded-xl p-3">
-                <div className="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Quy cách</div>
-                <div className="text-sm font-bold text-white">{potSize}</div>
-              </div>
-            </div>
 
-              {/* === THÔNG SỐ CHUYÊN MÔN (edit mode / view mode) === */}
+              {/* === THÔNG SỐ CHUYÊN MÔN === */}
               <div>
                 <div className="border-l-2 border-indigo-500 pl-4 py-1">
                   <div className="flex items-center justify-between mb-3">
@@ -283,92 +283,91 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
                         </button>
                       )
                     ) : (
-                    <div className="flex gap-1.5">
-                      <button onClick={saveEdit} disabled={saving}
-                        className="flex items-center gap-1 text-[9px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-500/15 hover:bg-emerald-500/25 px-2.5 py-1 rounded-full transition-colors disabled:opacity-50">
-                        {saving ? '...' : '✓ Lưu'}
-                      </button>
-                      <button onClick={() => setEditing(false)}
-                        className="text-[9px] text-gray-400 font-bold uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-full transition-colors">
-                        Hủy
-                      </button>
+                      <div className="flex gap-1.5">
+                        <button onClick={saveEdit} disabled={saving}
+                          className="flex items-center gap-1 text-[9px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-500/15 hover:bg-emerald-500/25 px-2.5 py-1 rounded-full transition-colors disabled:opacity-50">
+                          {saving ? '...' : '✓ Lưu'}
+                        </button>
+                        <button onClick={() => setEditing(false)}
+                          className="text-[9px] text-gray-400 font-bold uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-full transition-colors">
+                          Hủy
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {editing ? (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-gray-500 text-[10px] uppercase tracking-wider mb-1 block">Lá & Cành</label>
+                        <input className={inputCls} value={editForm.leafSize} onChange={e => setEditForm(p => ({ ...p, leafSize: e.target.value }))} placeholder="VD: Nhỏ, xanh đậm, hình trứng" />
+                      </div>
+                      <div>
+                        <label className="text-gray-500 text-[10px] uppercase tracking-wider mb-1 block">Đốt lá</label>
+                        <input className={inputCls} value={editForm.internodes} onChange={e => setEditForm(p => ({ ...p, internodes: e.target.value }))} placeholder="VD: Ngắn, tạo tán dày đặc" />
+                      </div>
+                      <div>
+                        <label className="text-gray-500 text-[10px] uppercase tracking-wider mb-1 block">Nở hoa</label>
+                        <input className={inputCls} value={editForm.floweringStyle} onChange={e => setEditForm(p => ({ ...p, floweringStyle: e.target.value }))} placeholder="VD: Nở chi chít phủ kín tán" />
+                      </div>
+                      <div>
+                        <label className="text-gray-500 text-[10px] uppercase tracking-wider mb-1 block">Ứng dụng (cách nhau bởi dấu phẩy)</label>
+                        <input className={inputCls} value={editForm.usage} onChange={e => setEditForm(p => ({ ...p, usage: e.target.value }))} placeholder="VD: Hàng rào, Resort, Bonsai" />
+                      </div>
+                      <div>
+                        <label className="text-gray-500 text-[10px] uppercase tracking-wider mb-1 block">Ghi chú chuyên môn</label>
+                        <textarea className={inputCls + " resize-none"} rows={2} value={editForm.notes} onChange={e => setEditForm(p => ({ ...p, notes: e.target.value }))} placeholder="Ghi chú thêm..." />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5 text-sm">
+                      {spec ? (
+                        <>
+                          <div className="flex items-start gap-2">
+                            <span className="text-gray-500 text-xs w-20 shrink-0">Lá & Cành:</span>
+                            <span className="text-white leading-relaxed">{spec.leafSize || '—'}</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <span className="text-gray-500 text-xs w-20 shrink-0">Đốt lá:</span>
+                            <span className="text-white leading-relaxed">{spec.internodes || '—'}</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <span className="text-gray-500 text-xs w-20 shrink-0">Nở hoa:</span>
+                            <span className="text-white leading-relaxed">{spec.floweringStyle || '—'}</span>
+                          </div>
+                          {spec.usage && spec.usage.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {spec.usage.map(u => (
+                                <span key={u} className="text-[9px] bg-indigo-500/15 text-indigo-300 px-2 py-1 rounded-full font-bold uppercase tracking-wider">{u}</span>
+                              ))}
+                            </div>
+                          )}
+                          {spec.colors && spec.colors.length > 0 && (
+                            <div className="mt-3 pt-3 border-t border-white/5">
+                              <div className="text-[9px] text-gray-500 uppercase tracking-widest mb-2 font-bold">Bảng màu hoa</div>
+                              <div className="flex flex-wrap gap-2">
+                                {spec.colors.map((c: { name: string; hex: string }) => (
+                                  <div key={c.name} className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1.5 rounded-lg">
+                                    <div className="w-4 h-4 rounded-full border border-white/20 shrink-0" style={{ background: c.hex }} />
+                                    <span className="text-[10px] text-gray-300 font-medium">{c.name}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <p className="text-gray-500 text-xs italic">Chưa có thông số chuyên môn cho dòng này. Bấm &quot;Chỉnh sửa&quot; để thêm.</p>
+                      )}
                     </div>
                   )}
                 </div>
-
-                {editing ? (
-                  /* === EDIT MODE === */
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-gray-500 text-[10px] uppercase tracking-wider mb-1 block">Lá & Cành</label>
-                      <input className={inputCls} value={editForm.leafSize} onChange={e => setEditForm(p => ({ ...p, leafSize: e.target.value }))} placeholder="VD: Nhỏ, xanh đậm, hình trứng" />
-                    </div>
-                    <div>
-                      <label className="text-gray-500 text-[10px] uppercase tracking-wider mb-1 block">Đốt lá</label>
-                      <input className={inputCls} value={editForm.internodes} onChange={e => setEditForm(p => ({ ...p, internodes: e.target.value }))} placeholder="VD: Ngắn, tạo tán dày đặc" />
-                    </div>
-                    <div>
-                      <label className="text-gray-500 text-[10px] uppercase tracking-wider mb-1 block">Nở hoa</label>
-                      <input className={inputCls} value={editForm.floweringStyle} onChange={e => setEditForm(p => ({ ...p, floweringStyle: e.target.value }))} placeholder="VD: Nở chi chít phủ kín tán" />
-                    </div>
-                    <div>
-                      <label className="text-gray-500 text-[10px] uppercase tracking-wider mb-1 block">Ứng dụng (cách nhau bởi dấu phẩy)</label>
-                      <input className={inputCls} value={editForm.usage} onChange={e => setEditForm(p => ({ ...p, usage: e.target.value }))} placeholder="VD: Hàng rào, Resort, Bonsai" />
-                    </div>
-                    <div>
-                      <label className="text-gray-500 text-[10px] uppercase tracking-wider mb-1 block">Ghi chú chuyên môn</label>
-                      <textarea className={inputCls + " resize-none"} rows={2} value={editForm.notes} onChange={e => setEditForm(p => ({ ...p, notes: e.target.value }))} placeholder="Ghi chú thêm..." />
-                    </div>
-                  </div>
-                ) : (
-                  /* === VIEW MODE === */
-                  <div className="space-y-2.5 text-sm">
-                    {spec ? (
-                      <>
-                        <div className="flex items-start gap-2">
-                          <span className="text-gray-500 text-xs w-20 shrink-0">Lá & Cành:</span>
-                          <span className="text-white leading-relaxed">{spec.leafSize || '—'}</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <span className="text-gray-500 text-xs w-20 shrink-0">Đốt lá:</span>
-                          <span className="text-white leading-relaxed">{spec.internodes || '—'}</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <span className="text-gray-500 text-xs w-20 shrink-0">Nở hoa:</span>
-                          <span className="text-white leading-relaxed">{spec.floweringStyle || '—'}</span>
-                        </div>
-                        {spec.usage && spec.usage.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mt-2">
-                            {spec.usage.map(u => (
-                              <span key={u} className="text-[9px] bg-indigo-500/15 text-indigo-300 px-2 py-1 rounded-full font-bold uppercase tracking-wider">{u}</span>
-                            ))}
-                          </div>
-                        )}
-                        {spec.colors && spec.colors.length > 0 && (
-                          <div className="mt-3 pt-3 border-t border-white/5">
-                            <div className="text-[9px] text-gray-500 uppercase tracking-widest mb-2 font-bold">Bảng màu hoa</div>
-                            <div className="flex flex-wrap gap-2">
-                              {spec.colors.map((c: { name: string; hex: string }) => (
-                                <div key={c.name} className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1.5 rounded-lg">
-                                  <div className="w-4 h-4 rounded-full border border-white/20 shrink-0" style={{ background: c.hex }} />
-                                  <span className="text-[10px] text-gray-300 font-medium">{c.name}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <p className="text-gray-500 text-xs italic">Chưa có thông số chuyên môn cho dòng này. Bấm &quot;Chỉnh sửa&quot; để thêm.</p>
-                    )}
+                {!editing && spec?.notes && (
+                  <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-3 mt-3">
+                    <p className="text-xs text-blue-300 leading-relaxed italic">&quot;{spec.notes}&quot;</p>
                   </div>
                 )}
               </div>
-              {!editing && spec?.notes && (
-                <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-3 mt-3">
-                  <p className="text-xs text-blue-300 leading-relaxed italic">&quot;{spec.notes}&quot;</p>
-                </div>
-              )}
 
               {/* Public Note */}
               <div>
@@ -383,51 +382,58 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
                       </button>
                     )
                   ) : (
-                  <div className="flex gap-1.5">
-                    <button onClick={saveNote} disabled={savingNote}
-                      className="flex items-center gap-1 text-[9px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-500/15 hover:bg-emerald-500/25 px-2.5 py-1 rounded-full transition-colors disabled:opacity-50">
-                      {savingNote ? '...' : '✓ Lưu'}
-                    </button>
-                    <button onClick={() => setEditingNote(false)}
-                      className="text-[9px] text-gray-400 font-bold uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-full transition-colors">
-                      Hủy
-                    </button>
-                  </div>
+                    <div className="flex gap-1.5">
+                      <button onClick={saveNote} disabled={savingNote}
+                        className="flex items-center gap-1 text-[9px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-500/15 hover:bg-emerald-500/25 px-2.5 py-1 rounded-full transition-colors disabled:opacity-50">
+                        {savingNote ? '...' : '✓ Lưu'}
+                      </button>
+                      <button onClick={() => setEditingNote(false)}
+                        className="text-[9px] text-gray-400 font-bold uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-full transition-colors">
+                        Hủy
+                      </button>
+                    </div>
+                  )}
+                </div>
+                {editingNote ? (
+                  <textarea
+                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 transition-all resize-none leading-relaxed"
+                    rows={4}
+                    value={noteText}
+                    onChange={e => setNoteText(e.target.value)}
+                    placeholder="Nhập mô tả chi tiết cho lô hàng này..."
+                    autoFocus
+                  />
+                ) : (
+                  <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line bg-white/5 p-4 rounded-xl border border-white/5">
+                    {currentNote || "Hiện tại vườn chưa cập nhật mô tả. Bấm \"Chỉnh sửa\" để thêm."}
+                  </p>
                 )}
               </div>
-              {editingNote ? (
-                <textarea
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 transition-all resize-none leading-relaxed"
-                  rows={4}
-                  value={noteText}
-                  onChange={e => setNoteText(e.target.value)}
-                  placeholder="Nhập mô tả chi tiết cho lô hàng này..."
-                  autoFocus
-                />
-              ) : (
-                <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line bg-white/5 p-4 rounded-xl border border-white/5">
-                  {currentNote || "Hiện tại vườn chưa cập nhật mô tả. Bấm \"Chỉnh sửa\" để thêm."}
-                </p>
-              )}
             </div>
-          </div>
 
-          {/* Sticky CTAs at Bottom */}
-          <div className="p-6 pt-4 border-t border-white/5 shrink-0 flex flex-col sm:flex-row gap-3 bg-[#0b1326] z-10">
-            <button onClick={() => onCtaClick && onCtaClick(batch)}
-              className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-3.5 px-6 rounded-xl uppercase tracking-widest text-[10px] shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5">
-              {ctaLabel || 'Yêu cầu tư vấn'}
-            </button>
-            <a href={`https://zalo.me/0849866686?text=Tôi muốn tư vấn chi tiết lô hàng: ${batch.skuNameVi} (${batch.lotId})`}
-              target="_blank" rel="noreferrer"
-              className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black py-3.5 px-6 rounded-xl uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2">
-              Trao đổi qua Zalo
-            </a>
+            {/* Sticky CTAs at Bottom */}
+            <div className="p-6 pt-4 border-t border-white/5 shrink-0 flex flex-col sm:flex-row gap-3 bg-[#0b1326] z-10">
+              {ctaHref ? (
+                <a href={ctaHref} target="_blank" rel="noreferrer"
+                  className="flex-1 text-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-3.5 px-6 rounded-xl uppercase tracking-widest text-[10px] shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5">
+                  {ctaLabel || 'Yêu cầu tư vấn'}
+                </a>
+              ) : (
+                <button onClick={() => onCtaClick && onCtaClick(batch)}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-3.5 px-6 rounded-xl uppercase tracking-widest text-[10px] shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5">
+                  {ctaLabel || 'Yêu cầu tư vấn'}
+                </button>
+              )}
+              <a href={`https://zalo.me/0849866686?text=${encodeURIComponent(`Tôi muốn tư vấn chi tiết lô hàng: ${batch.skuNameVi} (${batch.lotId})`)}`}
+                target="_blank" rel="noreferrer"
+                className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black py-3.5 px-6 rounded-xl uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2">
+                Trao đổi qua Zalo
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </>,
-  document.body
-);
+    </>,
+    document.body
+  );
 }
