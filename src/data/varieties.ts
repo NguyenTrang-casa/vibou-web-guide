@@ -41,8 +41,8 @@ export const VARIETY_SPECS: Record<string, VarietySpec> = {
     usage: ['Cây tạo dáng', 'Bonsai hoa giấy', 'Cây độc lập sân vườn'],
     notes: 'Dòng hoa cứng cáp, dễ tạo form, giữ hoa rất lâu trên cành.',
     colors: [
-      { name: 'Lem', hex: 'linear-gradient(135deg, #F472B6 50%, #FFFFFF 50%)' },
-      { name: 'Son môi hồng', hex: '#DB2777' },
+      { name: 'Lem', hex: 'linear-gradient(135deg, #E11D48 50%, #FFFFFF 50%)' },
+      { name: 'Son môi', hex: '#DB2777' },
     ]
   },
   'Đổi màu': {
@@ -52,7 +52,7 @@ export const VARIETY_SPECS: Record<string, VarietySpec> = {
     usage: ['Tiểu cảnh sân vườn', 'Cafe check-in', 'Khu nghỉ dưỡng'],
     notes: 'Điểm nhấn đặc biệt: cùng 1 cây nhưng cho ra nhiều tông màu khác nhau.',
     colors: [
-      { name: 'Golden Sunshine', hex: 'linear-gradient(135deg, #FBBF24 50%, #F472B6 50%)' },
+      { name: 'Golden Sunshine', hex: '#FACC15' },
       { name: 'Moduring', hex: 'linear-gradient(135deg, #EF4444 50%, #FFFFFF 50%)' },
     ]
   },
