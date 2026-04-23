@@ -81,6 +81,12 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
   const [saving, setSaving] = useState(false);
   const [editForm, setEditForm] = useState({ leafSize: '', internodes: '', floweringStyle: '', usage: '' as string, notes: '' });
 
+  // Note editing
+  const [editingNote, setEditingNote] = useState(false);
+  const [savingNote, setSavingNote] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [currentNote, setCurrentNote] = useState('');
+
   const spec = batch ? findSpec(batch.dongGiay, allSpecs) : undefined;
 
   // Fetch specs on mount
@@ -93,6 +99,7 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
     if (batch) {
       document.body.style.overflow = 'hidden';
       setActiveImageIndex(0); setZoomActive(false); setEditing(false);
+      setEditingNote(false); setCurrentNote(batch.publicNote || '');
     } else { document.body.style.overflow = 'unset'; }
     return () => { document.body.style.overflow = 'unset'; };
   }, [batch]);
@@ -100,11 +107,33 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
   useEffect(() => {
     if (!batch) return;
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { zoomActive ? setZoomActive(false) : editing ? setEditing(false) : onClose(); }
+      if (e.key === 'Escape') { editingNote ? setEditingNote(false) : zoomActive ? setZoomActive(false) : editing ? setEditing(false) : onClose(); }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [batch, zoomActive, editing, onClose]);
+  }, [batch, zoomActive, editing, editingNote, onClose]);
+
+  const startNoteEdit = useCallback(() => {
+    setNoteText(currentNote);
+    setEditingNote(true);
+  }, [currentNote]);
+
+  const saveNote = useCallback(async () => {
+    if (!batch?.id) return;
+    setSavingNote(true);
+    try {
+      const res = await fetch(`${ERP_URL}/api/public/batch-note`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ batchId: batch.id, publicNote: noteText }),
+      });
+      if (res.ok) {
+        setCurrentNote(noteText);
+        setEditingNote(false);
+      }
+    } catch (e) { console.error('Save note error:', e); }
+    setSavingNote(false);
+  }, [batch, noteText]);
 
   const startEdit = useCallback(() => {
     if (!spec) return;
@@ -338,15 +367,39 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mô tả từ vườn</h3>
-                <a href={`https://vibou-erp.vercel.app/unique-products?search=${batch.lotId}`} target="_blank" rel="noreferrer"
-                  className="flex items-center gap-1.5 text-[9px] text-yellow-400/80 hover:text-yellow-300 font-bold uppercase tracking-wider bg-yellow-500/10 hover:bg-yellow-500/20 px-3 py-1.5 rounded-full transition-colors">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                  Chỉnh sửa trên ERP
-                </a>
+                {!editingNote ? (
+                  <button onClick={startNoteEdit}
+                    className="flex items-center gap-1.5 text-[9px] text-yellow-400/80 hover:text-yellow-300 font-bold uppercase tracking-wider bg-yellow-500/10 hover:bg-yellow-500/20 px-3 py-1.5 rounded-full transition-colors">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                    Chỉnh sửa
+                  </button>
+                ) : (
+                  <div className="flex gap-1.5">
+                    <button onClick={saveNote} disabled={savingNote}
+                      className="flex items-center gap-1 text-[9px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-500/15 hover:bg-emerald-500/25 px-2.5 py-1 rounded-full transition-colors disabled:opacity-50">
+                      {savingNote ? '...' : '✓ Lưu'}
+                    </button>
+                    <button onClick={() => setEditingNote(false)}
+                      className="text-[9px] text-gray-400 font-bold uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-full transition-colors">
+                      Hủy
+                    </button>
+                  </div>
+                )}
               </div>
-              <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line bg-white/5 p-4 rounded-xl border border-white/5">
-                {batch.publicNote || "Hiện tại vườn chưa cập nhật mô tả cụ thể cho lô hàng này."}
-              </p>
+              {editingNote ? (
+                <textarea
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 transition-all resize-none leading-relaxed"
+                  rows={4}
+                  value={noteText}
+                  onChange={e => setNoteText(e.target.value)}
+                  placeholder="Nhập mô tả chi tiết cho lô hàng này..."
+                  autoFocus
+                />
+              ) : (
+                <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line bg-white/5 p-4 rounded-xl border border-white/5">
+                  {currentNote || "Hiện tại vườn chưa cập nhật mô tả. Bấm \"Chỉnh sửa\" để thêm."}
+                </p>
+              )}
             </div>
 
             {/* CTAs */}
