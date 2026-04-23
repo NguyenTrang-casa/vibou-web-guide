@@ -95,7 +95,7 @@ export default function WholesaleClient({ grouped }: WholesaleClientProps) {
                     <button 
                        onClick={(e) => {
                          e.stopPropagation();
-                         window.open(`https://zalo.me/vibou?text=Tôi muốn báo giá: ${batch.skuNameVi} (${batch.lotId})`, '_blank');
+                         window.open(`https://zalo.me/0849866686?text=Tôi muốn báo giá: ${batch.skuNameVi} (${batch.lotId})`, '_blank');
                        }}
                        className="bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-wider transition-all hover:-translate-y-0.5 whitespace-nowrap">
                       Hỏi giá
@@ -112,7 +112,7 @@ export default function WholesaleClient({ grouped }: WholesaleClientProps) {
         batch={selectedBatch} 
         onClose={() => setSelectedBatch(null)} 
         ctaLabel="Hỏi giá sỉ lô này"
-        onCtaClick={(b) => window.open(`https://zalo.me/vibou?text=Tôi muốn báo giá lô này: ${b.skuNameVi} (${b.lotId})`, '_blank')}
+        onCtaClick={(b) => window.open(`https://zalo.me/0849866686?text=Tôi muốn báo giá lô này: ${b.skuNameVi} (${b.lotId})`, '_blank')}
       />
     </>
   );

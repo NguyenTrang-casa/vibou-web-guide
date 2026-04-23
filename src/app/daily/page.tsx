@@ -70,7 +70,7 @@ export default async function WholesalePage() {
 
       {/* Zalo CTA cố định */}
       <div className="fixed bottom-6 right-6 z-[60]">
-        <a href="https://zalo.me/vibou" target="_blank" rel="noreferrer"
+        <a href="https://zalo.me/0849866686" target="_blank" rel="noreferrer"
            className="bg-blue-600 hover:bg-blue-500 text-white shadow-xl shadow-blue-500/40 rounded-full px-6 py-4 font-black flex items-center gap-3 transition-transform hover:-translate-y-2 border border-blue-400/50">
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
           <span className="uppercase tracking-wider text-xs">Liên hệ VIBOU</span>
