@@ -426,7 +426,8 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick }: P
           </div>
         </div>
       </div>
-    </>,
-    document.body
-  );
+    </div>
+  </>,
+  document.body
+);
 }
