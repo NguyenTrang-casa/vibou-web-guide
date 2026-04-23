@@ -93,7 +93,7 @@ export default function WholesaleClient({ grouped }: WholesaleClientProps) {
                     </div>
                     {/* CTA Button */}
                     <a 
-                       href={`https://zalo.me/0849866686?text=${encodeURIComponent(`Tôi muốn báo giá: ${batch.skuNameVi} (${batch.lotId})`)}`}
+                       href="https://zalo.me/0849866686"
                        target="_blank" rel="noreferrer"
                        onClick={(e) => e.stopPropagation()}
                        className="bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-wider transition-all hover:-translate-y-0.5 whitespace-nowrap inline-flex items-center justify-center">
@@ -111,7 +111,7 @@ export default function WholesaleClient({ grouped }: WholesaleClientProps) {
         batch={selectedBatch} 
         onClose={() => setSelectedBatch(null)} 
         ctaLabel="Hỏi giá sỉ lô này"
-        ctaHref={selectedBatch ? `https://zalo.me/0849866686?text=${encodeURIComponent(`Tôi muốn báo giá lô này: ${selectedBatch.skuNameVi} (${selectedBatch.lotId})`)}` : undefined}
+        ctaHref={selectedBatch ? "https://zalo.me/0849866686" : undefined}
       />
     </>
   );

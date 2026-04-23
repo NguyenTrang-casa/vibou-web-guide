@@ -424,7 +424,7 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick, cta
                   {ctaLabel || 'Yêu cầu tư vấn'}
                 </button>
               )}
-              <a href={`https://zalo.me/0849866686?text=${encodeURIComponent(`Tôi muốn tư vấn chi tiết lô hàng: ${batch.skuNameVi} (${batch.lotId})`)}`}
+              <a href="https://zalo.me/0849866686"
                 target="_blank" rel="noreferrer"
                 className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black py-3.5 px-6 rounded-xl uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2">
                 Trao đổi qua Zalo

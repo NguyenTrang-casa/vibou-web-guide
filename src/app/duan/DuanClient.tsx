@@ -58,7 +58,7 @@ export default function DuanClient({ projectBatches }: DuanClientProps) {
         batch={selectedBatch} 
         onClose={() => setSelectedBatch(null)} 
         ctaLabel="Tư vấn lô dự án này"
-        ctaHref={selectedBatch ? `https://zalo.me/0849866686?text=${encodeURIComponent(`Tôi cần tư vấn lô dự án: ${selectedBatch.skuNameVi} (${selectedBatch.lotId})`)}` : undefined}
+        ctaHref={selectedBatch ? "https://zalo.me/0849866686" : undefined}
       />
     </>
   );
