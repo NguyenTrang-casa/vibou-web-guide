@@ -10,6 +10,7 @@ const ERP_URL = 'https://vibou-erp.vercel.app';
 interface Batch {
   id: string; lotId: string; skuNameVi: string; dongGiay: string | null;
   mauSac?: string | null; quantity: number; available: number;
+  gardenLabel?: string;
   publicNote?: string; status?: string; coverImageUrl?: string;
   expectedExportDate?: string; images?: string[];
 }
@@ -248,7 +249,14 @@ export default function ProductModal({ batch, onClose, ctaLabel, onCtaClick, cta
             <div className="p-6 pb-4 border-b border-white/5 flex justify-between items-start shrink-0">
               <div>
                 <h2 className="text-xl sm:text-2xl font-black text-white leading-tight mb-1">{batch.skuNameVi}</h2>
-                <p className="text-gray-500 font-mono text-xs tracking-wider uppercase">{batch.lotId}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-gray-500 font-mono text-xs tracking-wider uppercase">{batch.lotId}</p>
+                  {batch.gardenLabel && (
+                    <span className="text-[10px] text-green-400 border border-green-400/30 px-1.5 py-0.5 rounded uppercase font-sans font-bold">
+                      {batch.gardenLabel}
+                    </span>
+                  )}
+                </div>
               </div>
               <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors shrink-0">
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>

@@ -12,6 +12,7 @@ interface Batch {
   mauSac?: string | null;
   quantity: number;
   available: number;
+  gardenLabel?: string;
   publicNote?: string;
   status?: string;
   coverImageUrl?: string;
@@ -30,7 +31,7 @@ const IMAGE_MAP: Record<string, string> = {
   'Mỹ lá lớn': 'my_la_lon.jpg',
   'Dưa hấu': 'dua_hau.jpg',
   'Murayama': 'murayama.webp',
-  'Sakura': 'sakura.webp',
+  'Sakura': 'snow.webp',
   'Tím tuyết': 'snow.webp',
   'Rượu vang': 'ruouvang.webp',
   'Socola': 'socola.webp',
@@ -51,7 +52,7 @@ export default function WholesaleClient({ grouped }: WholesaleClientProps) {
 
   return (
     <>
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 space-y-6 pb-20">
         {Object.entries(grouped).map(([dongGiay, items]) => (
           <div key={dongGiay} className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden">
             {/* Header nhóm */}
@@ -79,6 +80,11 @@ export default function WholesaleClient({ grouped }: WholesaleClientProps) {
                     <div className="font-bold text-white text-sm truncate group-hover:text-blue-400 transition-colors uppercase">{batch.skuNameVi}</div>
                     <div className="text-xs text-gray-500 font-mono mt-1 flex items-center gap-2">
                        {batch.lotId} 
+                       {batch.gardenLabel && (
+                         <span className="text-[10px] text-green-400 border border-green-400/30 px-1.5 py-0.5 rounded uppercase font-sans">
+                           {batch.gardenLabel}
+                         </span>
+                       )}
                        <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-gray-400">Xem chi tiết</span>
                     </div>
                   </div>
